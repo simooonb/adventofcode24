@@ -1,7 +1,9 @@
 import scala.io.Source
 
 @main
-def Day1(fileName: String, part: Int): Unit =
+def Day1(fileName: String, part: Int): Unit = {
+  import Day1Solution._
+
   if ((fileName != "input" && fileName != "test") || part < 1 || part > 2)
     println("Wrong file name")
   else {
@@ -13,25 +15,28 @@ def Day1(fileName: String, part: Int): Unit =
 
     source.close()
   }
-
-def parseInput(lines: List[String]): (List[Int], List[Int]) =
-  lines.map { line =>
-    val Array(left, right) = line.split(" {3}")
-    (left.toInt, right.toInt)
-  }.unzip
-
-def part1(lines: List[String]): Int = {
-  val (lefts, rights) = parseInput(lines)
-
-  (lefts.sorted zip rights.sorted).foldLeft(0) { case (acc, (l, r)) =>
-    acc + math.abs(l - r)
-  }
 }
 
-def part2(lines: List[String]): Int = {
-  val (lefts, rights) = parseInput(lines)
+object Day1Solution {
+  def part1(lines: List[String]): Int = {
+    val (lefts, rights) = parseInput(lines)
 
-  val rightCache = rights.map(i => i -> rights.count(_ == i)).toMap
+    (lefts.sorted zip rights.sorted).foldLeft(0) { case (acc, (l, r)) =>
+      acc + math.abs(l - r)
+    }
+  }
 
-  lefts.foldLeft(0)((acc, i) => acc + i * rightCache.getOrElse(i, 0))
+  def part2(lines: List[String]): Int = {
+    val (lefts, rights) = parseInput(lines)
+
+    val rightCache = rights.map(i => i -> rights.count(_ == i)).toMap
+
+    lefts.foldLeft(0)((acc, i) => acc + i * rightCache.getOrElse(i, 0))
+  }
+
+  private def parseInput(lines: List[String]): (List[Int], List[Int]) =
+    lines.map { line =>
+      val Array(left, right) = line.split(" {3}")
+      (left.toInt, right.toInt)
+    }.unzip
 }
